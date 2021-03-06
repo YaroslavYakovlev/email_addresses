@@ -1,51 +1,60 @@
 #include <iostream>
 
 bool validator(std::string strAddr){
-    bool error = true;
     for(int i = 0; i < strAddr.length(); i++){
-        if(((strAddr[i] == '.') && (strAddr[i + 1] == '.')) || (strAddr[i] == '@') 
-          || (strAddr[0] == '.') || ((strAddr.size() - 1) == '.') || (strAddr[i] == '"')
-            || (strAddr[i] == '(') || (strAddr[i] == ')') || (strAddr[i] == ',')
-              || (strAddr[i] == ':') || (strAddr[i] == ';') || (strAddr[i] == '<')
-                || (strAddr[i] == '>') || (strAddr[i] == '[') || (strAddr[i] == ']')
-                  || (strAddr[i] == '\\')){
-            error = false;
+        if(((strAddr[i] == '.') && ((strAddr[i + 1] == '.') && (strAddr[i] != strAddr[strAddr.length() - 1])))
+          || (strAddr[i] == '"') || (strAddr[i] == '(') || (strAddr[i] == ')') 
+            || (strAddr[i] == ',') || (strAddr[i] == ':') || (strAddr[i] == ';') 
+              || (strAddr[i] == '<') || (strAddr[i] == '>') || (strAddr[i] == '[') 
+                || (strAddr[i] == ']') || (strAddr[i] == '\\') || (strAddr[i] == '@')){
+            return false;
         }
     }
-    return error;
+    if((strAddr[0] == '.') || (strAddr[strAddr.length() - 1] == '.')){
+        return false;
+    }
+    return true;
+}
+
+bool validatorPartTwo(std::string strAddr){
+    for(int i = 0; i < strAddr.length(); i++){
+        if((strAddr[i] == '!') || (strAddr[i] == '#') || (strAddr[i] == '$')
+            || (strAddr[i] == '%') || (strAddr[i] == '&') || (strAddr[i] == '\'')
+              || (strAddr[i] == '*') || (strAddr[i] == '+') || (strAddr[i] == '-')
+                || (strAddr[i] == '/') || (strAddr[i] == '=') || (strAddr[i] == '?')
+                  || (strAddr[i] == '^') || (strAddr[i] == '_') || (strAddr[i] == '`')
+                    || (strAddr[i] == '{') || (strAddr[i] == '}') || (strAddr[i] == '|')
+                      || (strAddr[i] == '~')) {
+                          return false;
+                      }
+    }
+    return true;
 }
 
 bool partOne(std::string strAddr){
-    bool partOne = true;
     std::string strPatrOne;
     strPatrOne = strAddr.substr(0, strAddr.find("@"));
     if(strPatrOne.empty()){
-        partOne = false;
+        return false;
     }
     std::cout << "strPatrOne: " << strPatrOne << std::endl;
-    if((validator(strPatrOne) == false) || (strPatrOne.length() > 64)){
-        partOne = false;
+    if(!validator(strPatrOne) || (strPatrOne.length() > 64)){
+        return false;
     }    
-    return partOne;
+    return true;
 }
 
 bool partTwo(std::string strAddr){
-    bool partTwo = true;
     std::string strPartTwo;
     strPartTwo = strAddr.substr((strAddr.find("@") + 1), strAddr.length());
     if(strPartTwo.empty()){
-        partTwo = false;
+        return false;
     }
     std::cout << "strPartTwo: " << strPartTwo << std::endl;
-    for(int i = 0; i < strPartTwo.length(); i++){
-        if(strPartTwo[i] == '_'){
-            partTwo = false;
-        }
-    }
-    if((validator(strPartTwo) == false) || (strPartTwo.length() > 63)){
-        partTwo = false;
+    if(!validator(strPartTwo) || !validatorPartTwo(strPartTwo) || (strPartTwo.length() > 63)){
+        return false;
     } 
-    return partTwo;
+    return true;
 }
 
 int main()
@@ -62,7 +71,7 @@ int main()
             break;
         }
     }
-    if(((partOne(strAddres) == true) && (partTwo(strAddres) == true)) && flag){
+    if((partOne(strAddres) && partTwo(strAddres)) && flag){
         std::cout << "YES" << std::endl;
     }else{
         std::cout << "NO" << std::endl; 
